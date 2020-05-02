@@ -13,7 +13,7 @@ import Footer from "./components/Footer";
 import About from "./components/About";
 import Terms from "./components/Terms";
 
-function ExampleComponent() {
+function ComplexApp() {
   return (
     <BrowserRouter>
       <Header></Header>
@@ -35,7 +35,7 @@ function ExampleComponent() {
 
 ReactDOM.render(
   <React.StrictMode>
-    <ExampleComponent />
+    <ComplexApp />
   </React.StrictMode>,
   document.getElementById("root")
 );

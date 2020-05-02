@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+
 import "bootstrap/dist/css/bootstrap.css";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
@@ -13,12 +15,21 @@ import Terms from "./components/Terms";
 
 function ExampleComponent() {
   return (
-    <>
+    <BrowserRouter>
       <Header></Header>
-      <About></About>
-      <Terms></Terms>
+      <Switch>
+        <Route path="/" exact>
+          <HomeGuest></HomeGuest>
+        </Route>
+        <Route path="/about-us">
+          <About></About>
+        </Route>
+        <Route path="/terms">
+          <Terms></Terms>
+        </Route>
+      </Switch>
       <Footer></Footer>
-    </>
+    </BrowserRouter>
   );
 }
 

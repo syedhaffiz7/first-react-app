@@ -8,11 +8,15 @@ import * as serviceWorker from "./serviceWorker";
 import Header from "./components/Header";
 import HomeGuest from "./components/HomeGuest";
 import Footer from "./components/Footer";
+import About from "./components/About";
+import Terms from "./components/Terms";
+
 function ExampleComponent() {
   return (
     <>
       <Header></Header>
-      <HomeGuest></HomeGuest>
+      <About></About>
+      <Terms></Terms>
       <Footer></Footer>
     </>
   );

@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Axios from "axios";
+import AppContext from "../context/AppContext";
 
-function HeaderLoggedOut(props) {
+function HeaderLoggedOut() {
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
+  const { setLoggedIn } = useContext(AppContext);
 
   async function signIn(e) {
     e.preventDefault();
 
     try {
-      const response = await Axios.post("http://localhost:8080/login", {
+      const response = await Axios.post("/login", {
         username,
         password,
       });
@@ -19,7 +21,7 @@ function HeaderLoggedOut(props) {
         localStorage.setItem("complexAppUsername", response.data.username);
         localStorage.setItem("complexAppAvatar", response.data.avatar);
 
-        props.setLoggedIn(true);
+        setLoggedIn(true);
       } else {
         console.error("Incorrect username and password.");
       }

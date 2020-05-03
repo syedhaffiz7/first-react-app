@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import AppContext from "../context/AppContext";
 
-function HeaderLoggedIn(props) {
+function HeaderLoggedIn() {
+  const { setLoggedIn } = useContext(AppContext);
+
   function logout() {
-    props.setLoggedIn(false);
+    setLoggedIn(false);
     localStorage.removeItem("complexAppToken");
     localStorage.removeItem("complexAppUsername");
     localStorage.removeItem("complexAppAvatar");
@@ -20,9 +24,9 @@ function HeaderLoggedIn(props) {
       <span className="mr-2">
         <img className="small-header-avatar" alt="avatar" src={localStorage.getItem("complexAppAvatar")} />
       </span>
-      <a className="btn btn-sm btn-success mr-2" href="/create-post">
+      <Link className="btn btn-sm btn-success mr-2" to="/create-post">
         Create Post
-      </a>
+      </Link>
       <button onClick={logout} className="btn btn-sm btn-secondary">
         Sign Out
       </button>

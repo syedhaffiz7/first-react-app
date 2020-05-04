@@ -2,13 +2,16 @@ import React, { useState, useContext } from "react";
 import Page from "./Page";
 import Axios from "axios";
 import { Redirect } from "react-router-dom";
-import AppContext from "../context/AppContext";
+
+import DispatchContext from "../contexts/DispatchContext";
+import StateContext from "../contexts/StateContext";
 
 function CreatePost(props) {
   const [title, setTitle] = useState();
   const [body, setBody] = useState();
   const [isSuccessful, setIsSuccessful] = useState(false);
-  const { addFlashMessage } = useContext(AppContext);
+  const appDispatch = useContext(DispatchContext);
+  const appState = useContext(StateContext);
 
   async function createPost(e) {
     e.preventDefault();
@@ -16,7 +19,7 @@ function CreatePost(props) {
       const response = await Axios.post("/create-post", {
         title,
         body,
-        token: localStorage.getItem("complexAppToken"),
+        token: appState.user.token,
       });
 
       setIsSuccessful(response.data);
@@ -26,7 +29,7 @@ function CreatePost(props) {
   }
 
   if (isSuccessful) {
-    addFlashMessage("Congrats, you successfully created a post!");
+    appDispatch({ type: "flashMessage", value: "Congrats, you successfully created a post!" });
     return <Redirect to={`/post/${isSuccessful}`}></Redirect>;
   }
 

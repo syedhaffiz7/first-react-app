@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom";
+import { useImmerReducer } from "use-immer";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Axios from "axios";
 
@@ -8,7 +9,9 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 
 //App related components
-import AppContext from "./context/AppContext";
+import StateContext from "./contexts/StateContext";
+import DispatchContext from "./contexts/DispatchContext";
+
 import Header from "./components/Header";
 import HomeGuest from "./components/HomeGuest";
 import Footer from "./components/Footer";
@@ -18,42 +21,79 @@ import Home from "./components/Home";
 import CreatePost from "./components/CreatePost";
 import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
+import { act } from "react-dom/test-utils";
 
 Axios.defaults.baseURL = "http://localhost:8080";
 
 function ComplexApp() {
-  const [loggedIn, setLoggedIn] = useState(Boolean(localStorage.getItem("complexAppToken") && localStorage.getItem("complexAppUsername")));
-  const [flashMessages, setFlashMessages] = useState([]);
+  const initialState = {
+    loggedIn: Boolean(localStorage.getItem("complexAppToken") && localStorage.getItem("complexAppUsername")),
+    flashMessages: [],
+    user: {
+      token: localStorage.getItem("complexAppToken"),
+      username: localStorage.getItem("complexAppUsername"),
+      avatar: localStorage.getItem("complexAppAvatar"),
+    },
+  };
 
-  function addFlashMessage(msg) {
-    setFlashMessages((prev) => prev.concat(msg));
+  function ourReducer(draft, action) {
+    switch (action.type) {
+      case "login":
+        draft.loggedIn = true;
+        draft.user = action.data;
+        break;
+      case "logout":
+        draft.loggedIn = false;
+        break;
+      case "flashMessage":
+        draft.flashMessages.push(action.value);
+        break;
+      default:
+        break;
+    }
   }
 
+  const [state, dispatch] = useImmerReducer(ourReducer, initialState);
+
+  useEffect(() => {
+    if (state.loggedIn) {
+      localStorage.setItem("complexAppToken", state.user.token);
+      localStorage.setItem("complexAppUsername", state.user.username);
+      localStorage.setItem("complexAppAvatar", state.user.avatar);
+    } else {
+      localStorage.removeItem("complexAppToken");
+      localStorage.removeItem("complexAppUsername");
+      localStorage.removeItem("complexAppAvatar");
+    }
+  }, [state.loggedIn]);
+
   return (
-    <AppContext.Provider value={{ addFlashMessage, setLoggedIn }}>
-      <BrowserRouter>
-        <FlashMessages messages={flashMessages} />
-        <Header loggedIn={loggedIn}></Header>
-        <Switch>
-          <Route path="/" exact>
-            {loggedIn ? <Home /> : <HomeGuest />}
-          </Route>
-          <Route path="/create-post">
-            <CreatePost></CreatePost>
-          </Route>
-          <Route path="/post/:id">
-            <ViewSinglePost></ViewSinglePost>
-          </Route>
-          <Route path="/about-us">
-            <About></About>
-          </Route>
-          <Route path="/terms">
-            <Terms></Terms>
-          </Route>
-        </Switch>
-        <Footer></Footer>
-      </BrowserRouter>
-    </AppContext.Provider>
+    <StateContext.Provider value={state}>
+      <DispatchContext.Provider value={dispatch}>
+        <BrowserRouter>
+          <FlashMessages messages={state.flashMessages} />
+          <Header></Header>
+          <Switch>
+            <Route path="/" exact>
+              {state.loggedIn ? <Home /> : <HomeGuest />}
+            </Route>
+            <Route path="/create-post">
+              <CreatePost></CreatePost>
+            </Route>
+            <Route path="/post/:id">
+              <ViewSinglePost></ViewSinglePost>
+            </Route>
+            <Route path="/about-us">
+              <About></About>
+            </Route>
+            <Route path="/terms">
+              <Terms></Terms>
+            </Route>
+          </Switch>
+          <Footer></Footer>
+        </BrowserRouter>
+      </DispatchContext.Provider>
+    </StateContext.Provider>
   );
 }
 

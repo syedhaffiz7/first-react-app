@@ -180,6 +180,14 @@ textarea.tall-textarea {
   }
 }
 
+.edit-post-button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
 .delete-post-button {
   cursor: pointer;
   background: none;

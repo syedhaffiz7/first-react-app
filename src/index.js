@@ -21,7 +21,8 @@ import Home from "./components/Home";
 import CreatePost from "./components/CreatePost";
 import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
-import { act } from "react-dom/test-utils";
+import Profile from "./components/Profile";
+import EditPost from "./components/EditPost";
 
 Axios.defaults.baseURL = "http://localhost:8080";
 
@@ -65,7 +66,7 @@ function ComplexApp() {
       localStorage.removeItem("complexAppUsername");
       localStorage.removeItem("complexAppAvatar");
     }
-  }, [state.loggedIn]);
+  }, [state.loggedIn, state.user.avatar, state.user.token, state.user.username]);
 
   return (
     <StateContext.Provider value={state}>
@@ -74,14 +75,20 @@ function ComplexApp() {
           <FlashMessages messages={state.flashMessages} />
           <Header></Header>
           <Switch>
+            <Route path="/profile/:username">
+              <Profile></Profile>
+            </Route>
             <Route path="/" exact>
               {state.loggedIn ? <Home /> : <HomeGuest />}
             </Route>
             <Route path="/create-post">
               <CreatePost></CreatePost>
             </Route>
-            <Route path="/post/:id">
+            <Route path="/post/:id" exact>
               <ViewSinglePost></ViewSinglePost>
+            </Route>
+            <Route path="/post/:id/edit" exact>
+              <EditPost></EditPost>
             </Route>
             <Route path="/about-us">
               <About></About>

@@ -37,19 +37,35 @@ function EditPost() {
         draft.isLoading = false;
         return;
       case "titleChange":
+        draft.title.hasErrors = false;
         draft.title.value = action.value;
         return;
       case "bodyChange":
+        draft.body.hasErrors = false;
         draft.body.value = action.value;
         return;
       case "submitRequest":
-        draft.sendCount++;
+        if (!draft.title.hasErrors && !draft.body.hasErrors) {
+          draft.sendCount++;
+        }
         return;
       case "saveRequestStarted":
         draft.isSaving = true;
         return;
       case "saveRequestCompleted":
         draft.isSaving = false;
+        return;
+      case "titleRule":
+        if (!action.value.trim()) {
+          draft.title.hasErrors = true;
+          draft.title.message = "You must provide a title.";
+        }
+        return;
+      case "bodyRule":
+        if (!action.value.trim()) {
+          draft.body.hasErrors = true;
+          draft.body.message = "You must provide the body content.";
+        }
         return;
       default:
         return;
@@ -60,7 +76,8 @@ function EditPost() {
 
   function savePost(e) {
     e.preventDefault();
-
+    dispatch({ type: "titleRule", value: state.title.value });
+    dispatch({ type: "bodyRule", value: state.body.value });
     dispatch({ type: "submitRequest" });
   }
 
@@ -121,7 +138,7 @@ function EditPost() {
         request.cancel();
       };
     }
-  }, [appState.user.token, dispatch, state.body.value, state.id, state.sendCount, state.title.value]);
+  }, [appDispatch, appState.user.token, dispatch, state.body.value, state.id, state.sendCount, state.title.value]);
 
   if (state.isLoading) {
     return (
@@ -138,14 +155,16 @@ function EditPost() {
           <label htmlFor="post-title" className="text-muted mb-1">
             <small>Title</small>
           </label>
-          <input onChange={(e) => dispatch({ type: "titleChange", value: e.target.value })} autoFocus name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off" value={state.title.value} />
+          <input onBlur={(e) => dispatch({ type: "titleRule", value: e.target.value })} onChange={(e) => dispatch({ type: "titleChange", value: e.target.value })} autoFocus name="title" id="post-title" className="form-control form-control-lg form-control-title" type="text" placeholder="" autoComplete="off" value={state.title.value} />
+          {state.title.hasErrors && <div className="alert alert-danger small liveValidateMessage">{state.title.message}</div>}
         </div>
 
         <div className="form-group">
           <label htmlFor="post-body" className="text-muted mb-1 d-block">
             <small>Body Content</small>
           </label>
-          <textarea onChange={(e) => dispatch({ type: "bodyChange", value: e.target.value })} name="body" id="post-body" className="body-content tall-textarea form-control" type="text" value={state.body.value} />
+          <textarea onBlur={(e) => dispatch({ type: "bodyRule", value: e.target.value })} onChange={(e) => dispatch({ type: "bodyChange", value: e.target.value })} name="body" id="post-body" className="body-content tall-textarea form-control" type="text" value={state.body.value} />
+          {state.body.hasErrors && <div className="alert alert-danger small liveValidateMessage">{state.body.message}</div>}
         </div>
 
         <button className="btn btn-primary" disabled={state.isSaving}>

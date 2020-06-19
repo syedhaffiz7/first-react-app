@@ -7,13 +7,19 @@ import StateContext from "../contexts/StateContext";
 function HeaderLoggedIn() {
   const appDispatch = useContext(DispatchContext);
   const appState = useContext(StateContext);
+
   function logout() {
     appDispatch({ type: "logout" });
   }
 
+  function openSearch(e) {
+    e.preventDefault();
+    appDispatch({ type: "openSearch" });
+  }
+
   return (
     <div className="flex-row my-3 my-md-0">
-      <span className="text-white mr-2 header-search-icon">
+      <span onClick={openSearch} className="text-white mr-2 header-search-icon">
         <i className="fas fa-search"></i>
       </span>
       <span className="mr-2 header-chat-icon text-white">

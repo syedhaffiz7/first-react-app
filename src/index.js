@@ -23,6 +23,7 @@ import ViewSinglePost from "./components/ViewSinglePost";
 import FlashMessages from "./components/FlashMessages";
 import Profile from "./components/Profile";
 import EditPost from "./components/EditPost";
+import NotFound from "./components/NotFound";
 
 Axios.defaults.baseURL = "http://localhost:8080";
 
@@ -95,6 +96,9 @@ function ComplexApp() {
             </Route>
             <Route path="/terms">
               <Terms></Terms>
+            </Route>
+            <Route>
+              <NotFound></NotFound>
             </Route>
           </Switch>
           <Footer></Footer>

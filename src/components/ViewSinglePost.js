@@ -66,14 +66,7 @@ function ViewSinglePost(props) {
         const response = await Axios.delete(`/post/${id}`, { data: { token: appState.user.token } });
 
         if (response.data === "Success") {
-          // 1. display a flash message
           appDispatch({ type: "flashMessage", value: "Post was successfully deleted." });
-
-          // 2. Redirect to current user profile
-
-          // TODO: Validate
-
-          // FIXME: fix this bug
           props.history.push(`/profile/${appState.user.username}`);
         }
       } catch (error) {

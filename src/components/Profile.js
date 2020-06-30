@@ -29,6 +29,8 @@ function Profile() {
   });
 
   useEffect(() => {
+    const request = Axios.CancelToken.source();
+
     async function fetchData() {
       try {
         const response = await Axios.post(`/profile/${username}`, { token: appState.user.token });
@@ -42,6 +44,10 @@ function Profile() {
     }
 
     fetchData();
+
+    return () => {
+      request.cancel();
+    };
   }, [appState.user.token, setState, username]);
 
   useEffect(() => {
